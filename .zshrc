@@ -1,6 +1,10 @@
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/miniconda3/bin:/usr/local/bin:$PATH
+
 
 # Path to your oh-my-zsh installation.
-  export ZSH=/home/victor/.oh-my-zsh
+export ZSH=/Users/victor/.oh-my-zsh
 
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
@@ -49,7 +53,7 @@ HIST_STAMPS="dd/mm/yyyy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git colored-man colorize github pip python scala ubuntu)
+plugins=(git colored-man colorize github pip python)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -63,33 +67,30 @@ export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='nano'
-else
-  export EDITOR='subl -w'
+   export EDITOR='vim'
+ else
+   export EDITOR='subl'
 fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
 # ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
+# export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 
-
-#
 #
 # Prompt
-#
 #
 export cur_dir='${PWD/#$HOME/~}'
 VENV_PROMPT=""
 
 if [[ "$TERM" == "screen" ]]; then
-	TERM_PROMPT="(screen) "
+        TERM_PROMPT="(screen) "
 elif [[ "$TERM" == "screen.xterm-256color" ]]; then
-	TERM_PROMPT="(screen) "
+        TERM_PROMPT="(screen) "
 else
-	TERM_PROMPT=""
+        TERM_PROMPT=""
 fi
 
 #Git
@@ -109,12 +110,6 @@ export PROMPT="%{$fg[blue]%}${TERM_PROMPT}%{$reset_color%}\
 ${git_info} \
 %{$fg[white]%}[%*]:"
 
-# If you come from bash you might have to change your $PATH.
-export PATH=/home/victor/anaconda3/bin:/usr/local/cuda-8.0/bin:$PATH
-
-#CUDA
-export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-
 
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
@@ -123,10 +118,33 @@ export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
 #
 # Example aliases
 alias zshconfig="subl ~/.zshrc"
-alias ohmyzsh="subl ~/.oh-my-zsh"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# ZMV
-autoload zmv 
+autoload zmv
 alias zmv='noglob zmv -W'
 
-eval `dircolors ~/.dircolors`
+
+#Fixes permisions
+function fixdirperms(){
+	OLDIFS=$IFS
+	IFS=$'\n'
+
+	# read all file name into an array
+	fileArray=($(find "."))
+
+	# restore IFS
+	IFS=$OLDIFS
+
+	# get length of an array
+	tLen=${#fileArray[@]}
+
+	for (( i =0; i<${tLen}; i++ )); do
+		if [[ -d ${fileArray[$i]} ]]; then
+			echo "${fileArray[$i]} is directory"
+			chmod 755 ${fileArray[$i]}
+		elif [[ -f ${fileArray[$i]} ]]; then
+			echo "${fileArray[$i]} is file"
+			chmod u=rwx,g=rx,o=rx ${fileArray[$i]}
+		fi
+	done
+}
